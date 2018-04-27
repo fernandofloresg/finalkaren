@@ -641,16 +641,20 @@ var
      anchoIm, altoIm, margenIm : integer;
      libre : boolean;
 begin
-  anchoIm := 1200;
-  altoIm := 1000;
   margenIm := dis_cuadricula;
   posRobot();
   case sentido of
        1: begin  //abajo
-         if ((y_pos - dis_cuadricula) < margenIm +dis_cuadricula) or (mundo[x_pos_array+1,y_pos_array] = 0) then
+         if ((y_pos - dis_cuadricula) < margenIm +dis_cuadricula) then
          begin
-            ShowMessage('frente NO libre');
-            libre:=false;
+            if (y_pos_array+1 < row) then
+            begin
+              if (mundo[x_pos_array, y_pos_array+1] = 0) then
+              begin
+                ShowMessage('frente NO libre');
+                libre:=false;
+              end;
+            end;
             end
          else
          begin
@@ -660,10 +664,16 @@ begin
 
        end;
        2: begin //arriba
-         if ((y_pos+dis_cuadricula) > (altoIm-dis_cuadricula)) or (mundo[x_pos_array, y_pos_array+1] = 0) then
+         if ((y_pos+dis_cuadricula) > (altoIm-dis_cuadricula)) then
          begin
-            ShowMessage('frente NO libre');
-            libre:=false;
+            if(y_pos_array-1 > 0) then
+            begin
+              if mundo[x_pos_array, y_pos_array-1] = 0 then
+              begin
+                ShowMessage('frente NO libre');
+                libre:=false;
+              end;
+            end;
          end
          else
          begin
@@ -671,19 +681,25 @@ begin
            libre:=true;
          end;
        end;
-       3: begin
+       3: begin //izquierda
          if (x_pos-dis_cuadricula) > (margenIm) then
          begin
-            ShowMessage('frente libre');
-            libre:=true;
+           ShowMessage('frente libre');
+           libre:=true;
          end
          else
          begin
-           ShowMessage('frente NO libre');
-           libre:=false;
+           if (x_pos_array-1 > 0) then
+             begin
+               if mundo[x_pos_array-1, y_pos_array] = 0 then
+                 begin
+                   ShowMessage('frente NO libre');
+                   libre:=false;
+                 end;
+             end;
          end;
        end;
-       4: begin
+       4: begin  //derecha
          if (x_pos+dis_cuadricula) < (anchoIm) then
          begin
             ShowMessage('frente libre');
@@ -691,8 +707,14 @@ begin
          end
          else
          begin
-           ShowMessage('frente NO libre');
-           libre:=false;
+           if (x_pos_array +1 < col) then
+               begin
+                 if (mundo[x_pos_array+1, y_pos_array]) then
+                    begin
+                      ShowMessage('frente NO libre');
+                      libre:=false;
+                    end;
+               end;
          end;
        end;
   end;
@@ -863,9 +885,6 @@ begin
     Inicializa();
     sentido:=3;
     DibujaKarel(x_pos, y_pos, sentido);
-    anchoIm := 1200;
-    altoIm := 1000;
-    margenIm := 50;
     sem_pos:=0;
 
     //abrir archivo para moverse en el mundo
