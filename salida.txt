@@ -1,12 +1,5 @@
 programa
 inicio
-repetir
-2
-veces
-inicio
-vuelta_izquierda
-;
-fin
 si
 (
 frente_libre

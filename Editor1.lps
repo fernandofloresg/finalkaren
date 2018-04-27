@@ -9,7 +9,7 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <CursorPos Y="16"/>
-        <UsageCount Value="57"/>
+        <UsageCount Value="58"/>
       </Unit0>
       <Unit1>
         <Filename Value="unit1.pas"/>
@@ -20,9 +20,10 @@
         <UnitName Value="Unit1"/>
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="507"/>
-        <CursorPos X="33" Y="522"/>
-        <UsageCount Value="57"/>
+        <TopLine Value="858"/>
+        <CursorPos X="15" Y="864"/>
+        <ComponentState Value="2"/>
+        <UsageCount Value="58"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit1>
@@ -141,7 +142,7 @@
       </Unit16>
       <Unit17>
         <Filename Value="unit1.lfm"/>
-        <UsageCount Value="16"/>
+        <UsageCount Value="17"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="LFM"/>
       </Unit17>
@@ -294,7 +295,7 @@
         <UsageCount Value="10"/>
       </Unit37>
     </Units>
-    <JumpHistory Count="8" HistoryIndex="7">
+    <JumpHistory Count="13" HistoryIndex="12">
       <Position1>
         <Filename Value="unit1.pas"/>
         <Caret Line="533" Column="14" TopLine="513"/>
@@ -327,6 +328,26 @@
         <Filename Value="unit1.pas"/>
         <Caret Line="520" Column="16" TopLine="507"/>
       </Position8>
+      <Position9>
+        <Filename Value="unit1.pas"/>
+        <Caret Line="79" Column="24" TopLine="61"/>
+      </Position9>
+      <Position10>
+        <Filename Value="unit1.pas"/>
+        <Caret Line="84" Column="28" TopLine="64"/>
+      </Position10>
+      <Position11>
+        <Filename Value="unit1.pas"/>
+        <Caret Line="572" Column="34" TopLine="557"/>
+      </Position11>
+      <Position12>
+        <Filename Value="unit1.pas"/>
+        <Caret Line="650" Column="102" TopLine="638"/>
+      </Position12>
+      <Position13>
+        <Filename Value="unit1.pas"/>
+        <Caret Line="663" Column="100" TopLine="645"/>
+      </Position13>
     </JumpHistory>
   </ProjectSession>
 </CONFIG>

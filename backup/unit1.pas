@@ -516,11 +516,8 @@ end;
 function posRobot() : integer;
 begin
   //calcular los indices del bicho
-
   x_pos_array:=(((x_pos-25) div dis_cuadricula)-1);
-  showmessage(inttostr(x_pos_array));
-  x_pos_array:=(((x_pos-25) div dis_cuadricula)-1);
-  showmessage(inttostr(y_pos_array));
+  y_pos_array:=(((x_pos-25) div dis_cuadricula)-1);
 end;
 
 procedure TForm1.Inicializa();
@@ -571,8 +568,8 @@ begin
         begin
           if mundo[i,j] = 0 then
           begin
-            x1:=dis_cuadricula*j+2*dis_cuadricula;
-            y1:=dis_cuadricula*i+2*dis_cuadricula;
+            x1:=dis_cuadricula*j+dis_cuadricula;
+            y1:=dis_cuadricula*i+dis_cuadricula;
             Image1.Canvas.Rectangle(x1, y1, x1+dis_cuadricula, y1+dis_cuadricula);
           end;
         end;
@@ -647,9 +644,10 @@ begin
   anchoIm := 1200;
   altoIm := 1000;
   margenIm := dis_cuadricula;
+  posRobot();
   case sentido of
-       1: begin
-         if (y_pos - dis_cuadricula) < margenIm +dis_cuadricula then
+       1: begin  //abajo
+         if ((y_pos - dis_cuadricula) < margenIm +dis_cuadricula) or (mundo[x_pos_array+1,y_pos_array] = 0) then
          begin
             ShowMessage('frente NO libre');
             libre:=false;
@@ -661,8 +659,8 @@ begin
          end;
 
        end;
-       2: begin
-         if (y_pos+dis_cuadricula) > (altoIm-dis_cuadricula) then
+       2: begin //arriba
+         if ((y_pos+dis_cuadricula) > (altoIm-dis_cuadricula)) or (mundo[x_pos_array, y_pos_array+1] = 0) then
          begin
             ShowMessage('frente NO libre');
             libre:=false;
@@ -863,6 +861,7 @@ var
 begin
     //Dibuja mundo
     Inicializa();
+    sentido:=3;
     DibujaKarel(x_pos, y_pos, sentido);
     anchoIm := 1200;
     altoIm := 1000;
