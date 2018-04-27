@@ -1,0 +1,15 @@
+2
+1 0
+1 2
+2 2
+2
+
+Primera línea n=2 estados i=0,1,2
+Columna 1 = entrada 'a'
+Columna 2 = entrada 'b'
+Fila 2, estado q0
+Fila 3, estado q1
+Fila 4, estado q2 
+Fila 5, estado final
+Por simplicidad, estado inicial es fila 2 (q0)
+
