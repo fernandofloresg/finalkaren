@@ -1,11 +1,11 @@
 programa
 inicio
+vuelta_izquierda
+;
 si
 (
 frente_libre
 )
 inicio
-avanza
-;
 fin
 fin

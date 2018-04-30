@@ -517,7 +517,7 @@ function posRobot() : integer;
 begin
   //calcular los indices del bicho
   x_pos_array:=(((x_pos-25) div dis_cuadricula)-1);
-  y_pos_array:=(((x_pos-25) div dis_cuadricula)-1);
+  y_pos_array:=(((y_pos-25) div dis_cuadricula)-1);
 end;
 
 procedure TForm1.Inicializa();
@@ -642,80 +642,115 @@ var
      libre : boolean;
 begin
   margenIm := dis_cuadricula;
+  anchoIm := 600;
+  altoIm := 600;
   posRobot();
   case sentido of
-       1: begin  //abajo
-         if ((y_pos - dis_cuadricula) < margenIm +dis_cuadricula) then
+       1: begin  //arriba
+         if ((y_pos - dis_cuadricula) < margenIm) then
          begin
-            if (y_pos_array+1 < row) then
-            begin
-              if (mundo[x_pos_array, y_pos_array+1] = 0) then
-              begin
-                ShowMessage('frente NO libre');
-                libre:=false;
-              end;
-            end;
+            ShowMessage('frente NO libre');
+            libre:=false;
             end
          else
          begin
-            ShowMessage('frente libre');
-            libre:=true;
-         end;
-
-       end;
-       2: begin //arriba
-         if ((y_pos+dis_cuadricula) > (altoIm-dis_cuadricula)) then
-         begin
-            if(y_pos_array-1 > 0) then
+           if (y_pos_array-1 >= 0) then
             begin
-              if mundo[x_pos_array, y_pos_array-1] = 0 then
+              if (mundo[y_pos_array-1, x_pos_array] = 0) then
               begin
                 ShowMessage('frente NO libre');
                 libre:=false;
+              end
+              else
+              begin
+                ShowMessage('frente libre');
+                libre:=true;
               end;
+            end
+            else
+            begin
+              ShowMessage('frente libre');
+              libre:=true;
             end;
+         end;
+
+       end;
+       2: begin //abajo
+         if ((y_pos+dis_cuadricula) > (altoIm-dis_cuadricula)) then
+         begin
+           ShowMessage('frente NO libre');
+           libre:=false;
          end
          else
          begin
-           ShowMessage('frente libre');
-           libre:=true;
+           if(y_pos_array+1 < row) then
+            begin
+              if mundo[y_pos_array+1,x_pos_array] = 0 then
+              begin
+                ShowMessage('frente NO libre');
+                libre:=false;
+              end
+              else
+              begin
+                ShowMessage('frente libre');
+                libre:=true;
+              end;
+            end
+           else
+           begin
+             ShowMessage('Camino obstruido');
+             libre:=true;
+           end;
          end;
        end;
        3: begin //izquierda
          if (x_pos-dis_cuadricula) > (margenIm) then
          begin
-           ShowMessage('frente libre');
-           libre:=true;
-         end
-         else
-         begin
-           if (x_pos_array-1 > 0) then
+           if (x_pos_array-1 >= 0) then
              begin
-               if mundo[x_pos_array-1, y_pos_array] = 0 then
+               if mundo[y_pos_array, x_pos_array-1] = 0 then
                  begin
                    ShowMessage('frente NO libre');
                    libre:=false;
-                 end;
-             end;
+                 end
+               else
+               begin
+               ShowMessage('frente libre');
+               libre:=true;
+               end;
+
+             end
+         end
+         else
+         begin
+           ShowMessage('frente NO libre');
+           libre:=false;
+
          end;
        end;
        4: begin  //derecha
          if (x_pos+dis_cuadricula) < (anchoIm) then
          begin
-            ShowMessage('frente libre');
-            libre:=true;
-         end
-         else
-         begin
            if (x_pos_array +1 < col) then
                begin
-                 if (mundo[x_pos_array+1, y_pos_array] = 0) then
+                 if (mundo[y_pos_array, x_pos_array+1] = 0) then
                     begin
                       ShowMessage('frente NO libre');
                       libre:=false;
-                    end;
+                    end
+                 else
+                 begin
+                    ShowMessage('frente libre');
+                    libre:=true;
+                 end;
                end;
-         end;
+         end
+         else
+         begin
+            ShowMessage('frente NO libre');
+            libre:=false;
+         end
+
        end;
   end;
   result:=libre;
@@ -726,8 +761,8 @@ var
      anchoIm, altoIm, margenIm : integer;
      libre : boolean;
 begin
-  anchoIm := 1200;
-  altoIm := 1000;
+  anchoIm := 600;
+  altoIm := 600;
   margenIm := dis_cuadricula;
   case sentido of
        1: begin
@@ -883,7 +918,7 @@ var
 begin
     //Dibuja mundo
     Inicializa();
-    sentido:=3;
+    sentido:=2;
     DibujaKarel(x_pos, y_pos, sentido);
     sem_pos:=0;
 

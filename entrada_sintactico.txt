@@ -1,11 +1,11 @@
 a
 b
+g
+d
 l
 r
 m
 s
 b
-f
-d
 c
 c
