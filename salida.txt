@@ -1,8 +1,11 @@
 programa
 inicio
-cargar_laberinto
+mientras
 (
-14
+frente_libre
 )
+inicio
+avanza
 ;
+fin
 fin

@@ -1,11 +1,11 @@
 object Form1: TForm1
-  Left = 67
-  Height = 713
-  Top = 27
-  Width = 1299
+  Left = 339
+  Height = 699
+  Top = 68
+  Width = 1277
   Caption = 'Form1'
-  ClientHeight = 690
-  ClientWidth = 1299
+  ClientHeight = 676
+  ClientWidth = 1277
   Menu = MainMenu1
   OnCreate = FormCreate
   LCLVersion = '1.8.0.4'
@@ -20,7 +20,7 @@ object Form1: TForm1
     Left = 0
     Height = 26
     Top = 0
-    Width = 1299
+    Width = 1277
     Caption = 'ToolBar1'
     Images = ImageList1
     TabOrder = 1
@@ -124,6 +124,15 @@ object Form1: TForm1
     Caption = 'Ejecutar Análisis Semántico'
     OnClick = Button3Click
     TabOrder = 5
+  end
+  object Button4: TButton
+    Left = 512
+    Height = 97
+    Top = 240
+    Width = 163
+    Caption = 'Ejecutar Completo'
+    OnClick = Button4Click
+    TabOrder = 6
   end
   object MainMenu1: TMainMenu
     left = 328

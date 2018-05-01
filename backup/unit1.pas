@@ -17,6 +17,7 @@ type
     Button1: TButton;
     Button2: TButton;
     Button3: TButton;
+    Button4: TButton;
     Image1: TImage;
     ImageList1: TImageList;
     MainMenu1: TMainMenu;
@@ -44,6 +45,7 @@ type
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
+    procedure Button4Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Image1Click(Sender: TObject);
     procedure MenuItem2Click(Sender: TObject);
@@ -74,9 +76,11 @@ var
   qi, qf : integer; // qi:estado inicial  qf:estado final
   alfabeto : String;
   tablaT, mundo : array of array of integer; // Cambiar de forma dinámica la Tabla de Transiciones
-  x_pos, y_pos, sentido, sem_pos, dis_cuadricula :integer;//posiciones del robot .
+  x_pos, y_pos, sentido, sem_pos, dis_cuadricula , offset_cuadricula:integer;//posiciones del robot .
   arraySemantico : TStringList;
   row, col, x_pos_array, y_pos_array : integer;
+  ancho, alto : integer;
+  lexico, sintactico : boolean;
 
 implementation
 
@@ -96,7 +100,7 @@ var
 begin
   //busca palabras reservadas
 reservadoArray := stringArray.create('programa','inicio','cargar_laberinto','avanza','vuelta_izquierda',
-               'frente_libre', 'izquierda_libre', 'repetir', 'veces', 'mientras', 'si', 'fin', '(', ')');
+               'frente_libre', 'izquierda_libre', 'repetir', 'veces', 'mientras', 'si', 'fin', '(', ')', 'n', ';');
 result := false;
 for i := low(reservadoArray) to high(reservadoArray) do
   if token = reservadoArray[i] then
@@ -252,6 +256,12 @@ begin
            5 : tipo := 'error, simbolo no especificado dentro de identificador';
            6 : tipo := 'simbolo';
       end;
+
+      if((tokenaux=';') and (token='')) or ((tokenaux=')') and (token='')) then
+        begin
+          texto:= tokenaux;
+          WriteLn(archivo_salida, texto);
+        end;
 
       if (esPalabraReservada(token)) or esNumero(token) then
         begin
@@ -489,16 +499,22 @@ begin
    end;
 end;
 
-function leerLaberinto() : boolean;
+function leerLaberinto(num_laberinto : integer) : boolean;
 var
    i, j : integer;
    laberinto : TextFile;
    resultado : boolean;
+   n_lab : string;
 begin
-  col:=10;
-  row:=10;
+  col:=15;
+  row:=15;
   //leer laberinto
-  AssignFile(laberinto, 'laberinto.txt');
+  if (num_laberinto = 0) then
+     AssignFile(laberinto, 'laberinto.txt')
+  else begin
+     n_lab:='laberintos/' + inttostr(num_laberinto) + '.txt';
+     AssignFile(laberinto, n_lab);
+     end;
   Reset(laberinto);
   SetLength(mundo, row, col);
   for i:=0 to row -1 do
@@ -516,17 +532,20 @@ end;
 function posRobot() : integer;
 begin
   //calcular los indices del bicho
-  x_pos_array:=(((x_pos-25) div dis_cuadricula)-1);
-  y_pos_array:=(((y_pos-25) div dis_cuadricula)-1);
+  x_pos_array:=(((x_pos-offset_cuadricula) div dis_cuadricula)-1);
+  y_pos_array:=(((y_pos-offset_cuadricula) div dis_cuadricula)-1);
 end;
 
 procedure TForm1.Inicializa();
 begin
-  x_pos:=75;
-  y_pos:=75;
   sentido:=2;
-  dis_cuadricula:=50;
-  leerLaberinto();
+  dis_cuadricula:=30;
+  offset_cuadricula:=15;
+  alto:=510;
+  ancho:=510;
+  x_pos:=dis_cuadricula+offset_cuadricula;
+  y_pos:=dis_cuadricula+offset_cuadricula;
+  leerLaberinto(0);
   DibujaMundo();
   Form1.Update;
   posRobot();
@@ -537,8 +556,8 @@ var
      anchoIm, altoIm, margenIm, x, y, i,j: integer;
      x1,x2,y1,y2 : integer;
 begin
-    anchoIm := 600;
-    altoIm := 600;
+    anchoIm := ancho;
+    altoIm := alto;
     margenIm := dis_cuadricula;
     Image1.Width := anchoIm;
     Image1.Height := altoIm;
@@ -570,6 +589,14 @@ begin
           begin
             x1:=dis_cuadricula*j+dis_cuadricula;
             y1:=dis_cuadricula*i+dis_cuadricula;
+            Image1.Canvas.Rectangle(x1, y1, x1+dis_cuadricula, y1+dis_cuadricula);
+          end;
+          if (i=row-1) and (j=col-1) then
+          begin
+            x1:=dis_cuadricula*j+dis_cuadricula;
+            y1:=dis_cuadricula*i+dis_cuadricula;
+            Image1.Canvas.Pen.Color := clRed;
+            Image1.Canvas.Brush.Color := clRed;
             Image1.Canvas.Rectangle(x1, y1, x1+dis_cuadricula, y1+dis_cuadricula);
           end;
         end;
@@ -642,8 +669,8 @@ var
      libre : boolean;
 begin
   posRobot();
-  anchoIm := 600;
-  altoIm := 600;
+  anchoIm := ancho;
+  altoIm := alto;
   margenIm := dis_cuadricula;
   case sentido of
        1: begin  //arriba
@@ -740,7 +767,7 @@ begin
                     end
                  else
                  begin
-                    ShowMessage('frente libre');
+                    //ShowMessage('frente libre');
                     libre:=true;
                  end;
                end;
@@ -761,8 +788,8 @@ var
      anchoIm, altoIm, margenIm : integer;
      libre : boolean;
 begin
-  anchoIm := 600;
-  altoIm := 600;
+  anchoIm := ancho;
+  altoIm := alto;
   margenIm := dis_cuadricula;
   posRobot();
   case sentido of
@@ -887,10 +914,11 @@ var
      n_inicio, fin_pos, pos, new_pos,inicio_for, i : integer;
      cadena, numero_for, expresionb : string;
      subinstrucciones : TStringList;
-     resultado_bool : boolean;
+     resultado_bool, negacion : boolean;
 begin
   pos:=0;
   cadena:=instrucciones[pos];
+  negacion:=false;
   while(pos < instrucciones.count) do
    begin
      case cadena of
@@ -905,6 +933,13 @@ begin
               inc(pos);
               inc(pos);
               expresionb:=instrucciones[pos];
+              if (expresionb = 'n') then
+              begin
+                 negacion:=true;
+                 inc(pos);
+                 inc(pos);
+                 expresionb:=instrucciones[pos];
+              end;
               inc(pos);
               inc(pos);
               inc(n_inicio);
@@ -924,6 +959,7 @@ begin
               case expresionb of
                    'frente_libre' : begin
                      resultado_bool := frente_libre();
+                     resultado_bool := resultado_bool xor negacion;
                      if resultado_bool then
                      begin
                         AnalizaSemantico(subinstrucciones);
@@ -932,6 +968,7 @@ begin
 
                    'izquierda_libre' : begin
                      resultado_bool := izquierda_libre();
+                     resultado_bool := resultado_bool xor negacion;
                      if resultado_bool then
                      begin
                         AnalizaSemantico(subinstrucciones);
@@ -969,6 +1006,13 @@ begin
          inc(pos);
          inc(pos);
          expresionb:=instrucciones[pos];
+         if (expresionb = 'n') then
+              begin
+                 negacion:=true;
+                 inc(pos);
+                 inc(pos);
+                 expresionb:=instrucciones[pos];
+              end;
          inc(pos);
          inc(pos);
          n_inicio:=0;
@@ -987,6 +1031,7 @@ begin
          case expresionb of
                    'frente_libre' : begin
                      resultado_bool := frente_libre();
+                     resultado_bool := resultado_bool xor negacion;
                      while resultado_bool do
                      begin
                         AnalizaSemantico(subinstrucciones);
@@ -996,6 +1041,7 @@ begin
 
                    'izquierda_libre' : begin
                      resultado_bool := izquierda_libre();
+                     resultado_bool := resultado_bool xor negacion;
                      while resultado_bool do
                      begin
                         AnalizaSemantico(subinstrucciones);
@@ -1005,12 +1051,23 @@ begin
               end;
          pos:=new_pos;
        end;
+       'cargar_laberinto' : begin
+         inc(pos);
+         inc(pos);
+         numero_for:=instrucciones[pos];
+         inc(pos);
+         inc(pos);
+         //cargar laberinto según el número
+         leerlaberinto(strtoint(numero_for));
+         DibujaMundo();
+         DibujaKarel(x_pos, y_pos, sentido);
        end;
-       inc(pos);
-       if(pos < instrucciones.count) then
-       begin
-         cadena:=instrucciones[pos];
-       end;
+     end;
+     inc(pos);
+     if(pos < instrucciones.count) then
+     begin
+       cadena:=instrucciones[pos];
+     end;
    end;
 end;
 
@@ -1033,6 +1090,14 @@ begin
     cadena:=arraySemantico[sem_pos];
     AnalizaSemantico(arraySemantico);
 
+end;
+
+procedure TForm1.Button4Click(Sender: TObject);
+begin
+  //ejecucion completa
+  TForm1.Button1Click(Sender);
+  TForm1.Button2Click(Sender);
+  TForm1.Button3Click(Sender);
 end;
 
 

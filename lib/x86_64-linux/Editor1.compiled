@@ -2,4 +2,5 @@
 <CONFIG>
   <Compiler Value="/usr/bin/fpc" Date="1505429304"/>
   <Params Value=" -MObjFPC -Scghi -Cg -O1 -g -gl -l -vewnhibq -Fi/home/fernandofloresg/Documentos/Compiladores/Editor1/lib/x86_64-linux -Fu/usr/lib/lazarus/1.8.0/lcl/units/x86_64-linux/gtk2 -Fu/usr/lib/lazarus/1.8.0/lcl/units/x86_64-linux -Fu/usr/lib/lazarus/1.8.0/components/lazutils/lib/x86_64-linux -Fu/usr/lib/lazarus/1.8.0/packager/units/x86_64-linux -Fu/home/fernandofloresg/Documentos/Compiladores/Editor1/ -FU/home/fernandofloresg/Documentos/Compiladores/Editor1/lib/x86_64-linux/ -dLCL -dLCLgtk2 Editor1.lpr"/>
+  <Complete Value="False"/>
 </CONFIG>
