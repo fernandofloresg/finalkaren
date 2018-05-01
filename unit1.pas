@@ -95,7 +95,7 @@ var
   i : integer;
 begin
   //busca palabras reservadas
-reservadoArray := stringArray.create('programa','inicio','cargar_mundo','avanza','vuelta_izquierda',
+reservadoArray := stringArray.create('programa','inicio','cargar_laberinto','avanza','vuelta_izquierda',
                'frente_libre', 'izquierda_libre', 'repetir', 'veces', 'mientras', 'si', 'fin', '(', ')');
 result := false;
 for i := low(reservadoArray) to high(reservadoArray) do
@@ -641,10 +641,10 @@ var
      anchoIm, altoIm, margenIm : integer;
      libre : boolean;
 begin
-  margenIm := dis_cuadricula;
+  posRobot();
   anchoIm := 600;
   altoIm := 600;
-  posRobot();
+  margenIm := dis_cuadricula;
   case sentido of
        1: begin  //arriba
          if ((y_pos - dis_cuadricula) < margenIm) then
@@ -764,8 +764,9 @@ begin
   anchoIm := 600;
   altoIm := 600;
   margenIm := dis_cuadricula;
+  posRobot();
   case sentido of
-       1: begin
+       1: begin //arriba
          if (x_pos - dis_cuadricula) < margenIm +dis_cuadricula then
          begin
             ShowMessage('izquierda NO libre');
@@ -773,12 +774,27 @@ begin
             end
          else
          begin
-            ShowMessage('izquierda libre');
-            libre:=true;
+            if(x_pos_array-1 >=0)  then
+            begin
+              if(mundo[y_pos_array, x_pos_array-1] = 0) then
+              begin
+                ShowMessage('izquierda NO libre');
+                libre:=false;
+              end
+              else
+              begin
+                ShowMessage('izquierda libre');
+                libre:=true;
+              end;
+            end
+            else
+            begin
+              ShowMessage('izquierda NO libre');
+              libre:=false;
+            end;
          end;
-
        end;
-       2: begin
+       2: begin //abajo
          if (x_pos+dis_cuadricula) > (anchoIm-dis_cuadricula) then
          begin
             ShowMessage('izquierda NO libre');
@@ -786,15 +802,47 @@ begin
          end
          else
          begin
-           ShowMessage('izquierda libre');
-           libre:=true;
+           if (x_pos_array + 1 < col ) then
+           begin
+             if(mundo[y_pos_array, x_pos_array+1]=0) then
+             begin
+               ShowMessage('izquierda NO libre');
+               libre:=false;
+             end
+             else
+             begin
+               ShowMessage('izquierda libre');
+               libre:=true;
+             end;
+           end
+           else
+           begin
+           ShowMessage('izquierda NO libre');
+           libre:=false;
+           end
          end;
        end;
-       3: begin
+       3: begin //izquierda
          if (y_pos+dis_cuadricula) > (altoIm-dis_cuadricula) then
          begin
-            ShowMessage('izquierda libre');
+            if(y_pos_array+1 < row) then
+            begin
+              if(mundo[y_pos_array+1, x_pos_array] = 0 ) then
+              begin
+                ShowMessage('izquierda NO libre');
+                libre:=false;
+              end
+              else
+              begin
+              ShowMessage('izquierda libre');
+              libre:=true;
+              end;
+            end
+            else
+            begin
+            ShowMessage('izquierda NO libre');
             libre:=true;
+            end;
          end
          else
          begin
@@ -802,11 +850,27 @@ begin
            libre:=false;
          end;
        end;
-       4: begin
+       4: begin //derecha
          if (y_pos-dis_cuadricula) < (margenIm+dis_cuadricula) then
          begin
-            ShowMessage('frente libre');
-            libre:=true;
+            if(y_pos_array -1 >= 0) then
+            begin
+               if(mundo[y_pos_array-1, x_pos_array] = 0) then
+               begin
+                  ShowMessage('izquierda NO libre');
+                  libre:=false;
+               end
+               else
+               begin
+                    ShowMessage('izquierda libre');
+                    libre:=true;
+               end;
+            end
+            else
+            begin
+              ShowMessage('izquierda NO libre');
+              libre:=false;
+            end;
          end
          else
          begin
@@ -901,12 +965,60 @@ begin
                end;
               pos:=new_pos;
        end;
+       'mientras' : begin
+         inc(pos);
+         inc(pos);
+         expresionb:=instrucciones[pos];
+         inc(pos);
+         inc(pos);
+         n_inicio:=0;
+         inc(n_inicio);
+         new_pos:=pos;
+         while(n_inicio <> 0) do
+         begin
+           inc(new_pos);
+           cadena:=instrucciones[new_pos];
+           if cadena = 'inicio' then
+              inc(n_inicio)
+           else if cadena = 'fin' then
+                dec(n_inicio);
+         end;
+         subinstrucciones:=crearsublist(instrucciones, pos, new_pos);
+         case expresionb of
+                   'frente_libre' : begin
+                     resultado_bool := frente_libre();
+                     while resultado_bool do
+                     begin
+                        AnalizaSemantico(subinstrucciones);
+                        resultado_bool := frente_libre();
+                     end;
+                   end;
+
+                   'izquierda_libre' : begin
+                     resultado_bool := izquierda_libre();
+                     while resultado_bool do
+                     begin
+                        AnalizaSemantico(subinstrucciones);
+                        resultado_bool := izquierda_libre();
+                     end;
+                   end;
+              end;
+         pos:=new_pos;
        end;
-       inc(pos);
-       if(pos < instrucciones.count) then
-       begin
-         cadena:=instrucciones[pos];
+       'cargar_laberinto' : begin
+         inc(pos);
+         inc(pos);
+         numero_for:=instrucciones[pos];
+         inc(pos);
+         //cargar laberinto según el número
+
        end;
+     end;
+     inc(pos);
+     if(pos < instrucciones.count) then
+     begin
+       cadena:=instrucciones[pos];
+     end;
    end;
 end;
 
@@ -918,7 +1030,7 @@ var
 begin
     //Dibuja mundo
     Inicializa();
-    sentido:=2;
+    sentido:=4;
     DibujaKarel(x_pos, y_pos, sentido);
     sem_pos:=0;
 

@@ -1,11 +1,8 @@
 programa
 inicio
-vuelta_izquierda
-;
-si
+cargar_laberinto
 (
-frente_libre
+14
 )
-inicio
-fin
+;
 fin
