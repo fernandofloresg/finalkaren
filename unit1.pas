@@ -792,7 +792,7 @@ begin
          end;
        end;
        4: begin  //derecha
-         if (x_pos+dis_cuadricula) < (anchoIm) then
+         if (x_pos+dis_cuadricula) < (anchoIm - dis_cuadricula) then
          begin
            if (x_pos_array +1 < col) then
                begin
@@ -931,13 +931,13 @@ begin
             end
             else
             begin
-              ShowMessage('izquierda NO libre');
+              //ShowMessage('izquierda NO libre');
               libre:=false;
             end;
          end
          else
          begin
-           ShowMessage('izquierda NO libre');
+           //ShowMessage('izquierda NO libre');
            libre:=false;
          end;
        end;

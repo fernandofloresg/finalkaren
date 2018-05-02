@@ -448,6 +448,10 @@ begin
      begin
         estado_pasado:=i;
         i:=tablaT[i,j];
+        if i < 0 then
+        begin
+           band:=true;
+        end;
      end
      else
         band:=true;
@@ -927,13 +931,13 @@ begin
             end
             else
             begin
-              ShowMessage('izquierda NO libre');
+              //ShowMessage('izquierda NO libre');
               libre:=false;
             end;
          end
          else
          begin
-           ShowMessage('izquierda NO libre');
+           //ShowMessage('izquierda NO libre');
            libre:=false;
          end;
        end;
