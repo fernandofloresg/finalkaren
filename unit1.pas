@@ -83,7 +83,7 @@ var
   arraySemantico : TStringList;
   row, col, x_pos_array, y_pos_array : integer;
   ancho, alto : integer;
-  lexico, sintactico : boolean;
+  lexi, sintac, choque : boolean;
 
 implementation
 
@@ -218,13 +218,14 @@ begin
 
 end;
 
-procedure TForm1.Button1Click(Sender: TObject);
+procedure TForm1.lexico();
 var
   caracter : char;
   i, j, k, tamano, d : integer;
   token, tokenAux, tipo, tipoTokenAux, linea, texto : string;
   archivo_salida : TextFile;
 begin
+  lexi:=true;
   //asignar archivo
   AssignFile(archivo_salida, 'salida.txt');
   ReWrite(archivo_salida);
@@ -280,6 +281,7 @@ begin
         if token <> '' then
         begin
           ShowMessage('Compilación errónea, palabra no identificada como parte del lenguaje');
+          lexi:=false;
           exit();
         end;
       end;
@@ -288,6 +290,10 @@ begin
   CloseFile(archivo_salida);
 end;
 
+procedure TForm1.Button1Click(Sender: TObject);
+begin
+lexico();
+end;
 
 function busqueda(caracter:char):integer;
 var
@@ -397,15 +403,16 @@ begin
 
 end;
 
-procedure TForm1.Button2Click(Sender: TObject);
+procedure TForm1.sintactico();
 var
   entrada : String;
-  i, j, k : integer;
+  i, j, k, estado_pasado : integer;
   band : boolean;
   letra : char;
   archivo_entrada_sintactico, archivo_salida_lexico : TextFile;
   pilaestado: tintegerStack;
 begin
+  sintac:=true;
   leerAutomata();
   asignarClavesTokens();
   //entrada := Edit1.Text;
@@ -438,7 +445,14 @@ begin
 
      j:=busqueda(letra);
      if (j>=0) then
-        i:=tablaT[i,j]
+     begin
+        estado_pasado:=i;
+        i:=tablaT[i,j];
+        if i < 0 then
+        begin
+           band:=true;
+        end;
+     end
      else
         band:=true;
   end;
@@ -446,6 +460,13 @@ begin
      ShowMessage('Pasó el Análisis Sintáctico')
   else
      ShowMessage('NO pasó el Análisis Sintáctico. Revisa tu código');
+  sintac:=(not band);
+
+end;
+
+procedure TForm1.Button2Click(Sender: TObject);
+begin
+  sintactico();
 end;
 
 procedure TForm1.DibujaKarel(x: integer;  y: integer; sentido: integer);
@@ -512,7 +533,7 @@ begin
   col:=15;
   row:=15;
   //leer laberinto
-  if (num_laberinto = 0) then
+  if (num_laberinto = 0) or (num_laberinto>16) then
      AssignFile(laberinto, 'laberinto.txt')
   else begin
      n_lab:='laberintos/' + inttostr(num_laberinto) + '.txt';
@@ -537,10 +558,22 @@ begin
   //calcular los indices del bicho
   x_pos_array:=(((x_pos-offset_cuadricula) div dis_cuadricula)-1);
   y_pos_array:=(((y_pos-offset_cuadricula) div dis_cuadricula)-1);
+
+  if(mundo[y_pos_array, x_pos_array] = 0) then
+  begin
+     ShowMessage('karen ha chocado');
+     choque:=true;
+  end
+  else if (y_pos_array = row-1) and (x_pos_array=col-1) then
+  begin
+     ShowMessage('karen ha ganado');
+     choque:=true;
+  end;
 end;
 
 procedure TForm1.Inicializa();
 begin
+  choque:=false;
   sentido:=2;
   dis_cuadricula:=30;
   offset_cuadricula:=15;
@@ -922,7 +955,7 @@ begin
   pos:=0;
   cadena:=instrucciones[pos];
   negacion:=false;
-  while(pos < instrucciones.count) do
+  while(pos < instrucciones.count) and (not choque) do
    begin
      case cadena of
        'avanza': begin
@@ -999,9 +1032,11 @@ begin
                     dec(n_inicio);
                end;
                subinstrucciones:=crearsublist(instrucciones, pos, new_pos);
-              for i:=1 to strtoint(numero_for) do
+               i:=0;
+              while(i<strtoint(numero_for)) and not choque do
                begin
                  AnalizaSemantico(subinstrucciones);
+                 inc(i);
                end;
               pos:=new_pos;
        end;
@@ -1021,7 +1056,7 @@ begin
          n_inicio:=0;
          inc(n_inicio);
          new_pos:=pos;
-         while(n_inicio <> 0) do
+         while(n_inicio <> 0) and not choque do
          begin
            inc(new_pos);
            cadena:=instrucciones[new_pos];
@@ -1071,10 +1106,11 @@ begin
      begin
        cadena:=instrucciones[pos];
      end;
+     posRobot();
    end;
 end;
 
-procedure TForm1.Button3Click(Sender: TObject);
+procedure TForm1.Semantico();
 var
     anchoIm, altoIm, margenIm, x, y, i, j,act_pos: integer;
     archivo_salida_lexico : TextFile;
@@ -1095,9 +1131,19 @@ begin
 
 end;
 
+procedure TForm1.Button3Click(Sender: TObject);
+begin
+    semantico();
+end;
+
 procedure TForm1.Button4Click(Sender: TObject);
 begin
-  //ejecucion completa
+  //ejecucion completa.
+  lexico();
+  if lexi then
+     sintactico();
+  if sintac then
+     semantico();
 end;
 
 

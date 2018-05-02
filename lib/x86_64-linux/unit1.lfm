@@ -125,6 +125,15 @@ object Form1: TForm1
     OnClick = Button3Click
     TabOrder = 5
   end
+  object Button4: TButton
+    Left = 512
+    Height = 97
+    Top = 240
+    Width = 163
+    Caption = 'Ejecutar Completo'
+    OnClick = Button4Click
+    TabOrder = 6
+  end
   object MainMenu1: TMainMenu
     left = 328
     top = 624

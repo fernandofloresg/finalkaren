@@ -1,9 +1,8 @@
 programa
 inicio
-mientras
-(
-frente_libre
-)
+repetir
+6
+veces
 inicio
 avanza
 ;
